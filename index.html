@@ -885,10 +885,13 @@ img, video {
         <h3 style="font-size: 1.6rem; color: #2d5a27; margin-bottom: 10px; font-weight: 600;">Coffee or tea sometime? ☕</h3>
         <p style="font-size: 1rem; color: #4a7c44; margin-bottom: 25px; font-weight: 400;">No pressure at all, just thought it'd be fun to chat! 🪴</p>
         
-        <!-- The Equal-Weight Buttons -->
-        <div id="coffeeButtons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <button class="coffee-btn yes-btn" onclick="sendCoffeeResponse('Sounds fun! ✨')">Sounds fun! ✨</button>
-            <button class="coffee-btn no-btn" onclick="sendCoffeeResponse('Maybe another time ⏳')">Maybe another time</button>
+        <!-- The Stacked Buttons (Mobile Friendly!) -->
+        <div id="coffeeButtons" style="display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%;">
+            
+            <button class="coffee-btn yes-btn" style="width: 80%; max-width: 250px;" onclick="sendCoffeeResponse('Sounds fun! ✨')">Sounds fun! ✨</button>
+            
+            <button class="coffee-btn no-btn" style="width: 80%; max-width: 250px; background: #e8e8e8; color: #555;" onclick="sendCoffeeResponse('Maybe another time ⏳')">Maybe another time</button>
+            
         </div>
         
         <!-- The polite confirmation message (hidden until she clicks) -->
