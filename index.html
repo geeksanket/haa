@@ -553,43 +553,53 @@ img, video {
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
-/* --- NEW SCRATCH-OFF STYLES --- */
-#scratchContainer {
+/* --- FRIENDLY COFFEE INVITATION STYLES --- */
+#coffeeContainer {
     position: relative;
     width: 90%;
-    max-width: 450px; /* Made it slightly wider */
-    height: 200px;    /* Increased height to fit more text */
-    /* 80px on the bottom keeps it safely away from the bottom edge of the screen */
+    max-width: 450px;
     margin: 30px auto 80px auto; 
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(214, 150, 168, 0.15);
-    touch-action: none;
-}
-
-#scratchPrize {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    box-shadow: 0 15px 35px rgba(168, 230, 207, 0.2);
+    background: rgba(234, 244, 234, 0.85); /* Soft, inviting sage/mint tint */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(168, 230, 207, 0.6);
+    padding: 30px 20px;
     text-align: center;
-    padding: 20px; /* Adds breathing room so your text doesn't touch the borders */
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.7);
-    border: 2px dashed #d17b94;
-    border-radius: 20px;
-    z-index: 1;
 }
 
-#scratchCanvas {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 2;
+.coffee-btn {
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 1.05rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.5s ease;
+    border: none;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    flex: 1 1 auto;
+    min-width: 140px;
 }
+
+.coffee-btn.yes-btn {
+    background: #a8e6cf;
+    color: #2d5a27;
+    box-shadow: 0 4px 15px rgba(168, 230, 207, 0.4);
+}
+
+.coffee-btn.yes-btn:hover { background: #95dfc2; transform: translateY(-2px); }
+.coffee-btn.yes-btn:active { transform: scale(0.95); }
+
+.coffee-btn.no-btn {
+    background: #f0f0f0;
+    color: #666;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.coffee-btn.no-btn:hover { background: #e4e4e4; transform: translateY(-2px); }
+.coffee-btn.no-btn:active { transform: scale(0.95); }
 
 /* --- NEW FLOATING BUBBLES STYLES --- */
 #bubbleScene {
@@ -870,15 +880,22 @@ img, video {
         </div>
     </div>
 
-    <!-- SCRATCH-OFF TICKET (Hidden by default now) -->
-    <div id="scratchContainer" style="display: none; opacity: 0; transition: opacity 0.8s ease; margin-bottom: 80px;">
-        <div id="scratchPrize">
-            <span class="gradient-text" style="font-size: 1.4em;">🎟️ ONE COFFEE DATE 🎟️</span>
-            <p style="font-size: 0.9em; margin-top: 8px; font-weight: 600; color: #8c4a60;">(On me. Redeemable anytime!)</p>
+    <!-- NEW FRIENDLY COFFEE INVITATION -->
+    <div id="coffeeContainer" style="display: none; opacity: 0; transition: opacity 0.8s ease;">
+        <h3 style="font-size: 1.6rem; color: #2d5a27; margin-bottom: 10px; font-weight: 600;">Coffee or tea sometime? ☕</h3>
+        <p style="font-size: 1rem; color: #4a7c44; margin-bottom: 25px; font-weight: 400;">No pressure at all, just thought it'd be fun to chat! 🪴</p>
+        
+        <!-- The Equal-Weight Buttons -->
+        <div id="coffeeButtons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button class="coffee-btn yes-btn" onclick="sendCoffeeResponse('Sounds fun! ✨')">Sounds fun! ✨</button>
+            <button class="coffee-btn no-btn" onclick="sendCoffeeResponse('Maybe another time ⏳')">Maybe another time</button>
         </div>
-        <canvas id="scratchCanvas"></canvas>
+        
+        <!-- The polite confirmation message (hidden until she clicks) -->
+        <div id="coffeeThankYou" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
+            <p style="font-size: 1.2rem; color: #2d5a27; font-weight: 600; margin: 15px 0;">Got it, thanks! Have a great day! 🌻</p>
+        </div>
     </div>
-</div>
 
 <!-- NEW BUBBLE SCENE -->
 <div id="bubbleScene" style="display:none; opacity: 0; transition: opacity 0.8s ease;">
@@ -923,7 +940,7 @@ I don't think that's a habit anymore, it's a lifestyle. 😂
 I genuinely hope ye saal tumhare liye bohot acha ho. (and i mean it)
 
 Jo bhi tum deserve karti ho...
-Isab aapke charano me aa jaye.
+sab aapke charano me aa jaye.
 
 Aur jitna tum dusro ko smile karati ho,
 utni hi smiles tumhe bhi mile.
@@ -1510,142 +1527,6 @@ function updateDots() {
 // Initialize the carousel right away
 initCarousel();
 
-// ============ SCRATCH-OFF TICKET LOGIC ============
-const sCanvas = document.getElementById("scratchCanvas");
-const sCtx = sCanvas.getContext("2d");
-let isScratching = false;
-let lastX = 0, lastY = 0;
-
-// The Prank Variables!
-let escapes = 0;
-const MAX_ESCAPES = 5;
-
-// The dialogue for the game of tag
-const teaseMessages = [
-    ["Maarna mat iske baad 😅", "👆 Scratch kariye ✨"],           // 0: Start
-    ["Arey idhar hu! 😜", "Miss kardia 😂"],                       // 1: First dodge
-    ["Itni slow yawr? 🐢", "Pakad ke dikhao! 🤭"],                // 2: Second dodge
-    ["Oops! 🏃💨", "Idhar udhar kya dekh rahi ho? 👇"],           // 3: Third dodge
-    ["Uff itni mehnat! 🥵", "Ek aur baar... 🫣"],                 // 4: Fourth dodge
-    ["Achha baba sorry 🥺", "Ab sach me scratch karlo ❤️"]        // 5: Surrender
-];
-
-function drawScratchCover(phase) {
-    // We use the CSS width/height so the math stays perfect on HD screens
-    const w = sCanvas.offsetWidth;
-    const h = sCanvas.offsetHeight;
-    
-    // Reset brush mode to paint the cover
-    sCtx.globalCompositeOperation = "source-over";
-    
-    // Create the metallic pink gradient
-    const gradient = sCtx.createLinearGradient(0, 0, w, h);
-    gradient.addColorStop(0, "#f3d1dc");
-    gradient.addColorStop(0.5, "#e5b5c5");
-    gradient.addColorStop(1, "#f3d1dc");
-    sCtx.fillStyle = gradient;
-    sCtx.fillRect(0, 0, w, h);
-
-    // Draw the teasing text!
-    sCtx.textAlign = "center";
-    sCtx.textBaseline = "middle";
-    
-    sCtx.font = "bold 22px Inter, sans-serif";
-    sCtx.fillStyle = "#8c4a60";
-    sCtx.fillText(teaseMessages[phase][0], w / 2, h / 2 - 16);
-    
-    sCtx.font = "600 16px Inter, sans-serif";
-    sCtx.fillStyle = "#a85a71";
-    sCtx.fillText(teaseMessages[phase][1], w / 2, h / 2 + 18);
-
-    // Set brush back to "eraser" mode for actual scratching
-    sCtx.globalCompositeOperation = "destination-out";
-}
-
-function initScratchCard() {
-    // CRITICAL FIX: Multiply the resolution for HD/Retina phone screens!
-    const dpr = window.devicePixelRatio || 1;
-    sCanvas.width = sCanvas.offsetWidth * dpr;
-    sCanvas.height = sCanvas.offsetHeight * dpr;
-    sCtx.scale(dpr, dpr); 
-    
-    // Draw the initial cover
-    drawScratchCover(0);
-
-    // Setup the events
-    sCanvas.addEventListener("mousedown", handleScratchAttempt);
-    sCanvas.addEventListener("touchstart", handleScratchAttempt, { passive: false });
-    sCanvas.addEventListener("mousemove", scratch);
-    sCanvas.addEventListener("touchmove", scratch, { passive: false });
-    window.addEventListener("mouseup", endScratch);
-    window.addEventListener("touchend", endScratch);
-}
-
-function handleScratchAttempt(e) {
-    // If it hasn't escaped 5 times yet, run away!
-    if (escapes < MAX_ESCAPES) {
-        e.preventDefault(); // Stop her from scratching
-        escapes++;
-        
-        const cont = document.getElementById("scratchContainer");
-        
-        if (escapes < MAX_ESCAPES) {
-            // Wildly jump around, tilt, and shrink!
-            const randomX = (Math.random() - 0.5) * (window.innerWidth * 0.6); // Jump left/right
-            const randomY = (Math.random() - 0.5) * 250 - 50;                  // Jump up/down
-            const randomRot = (Math.random() - 0.5) * 40;                      // Tilt wildly
-            const scale = 0.8 + Math.random() * 0.2;                           // Shrink a bit
-            
-            cont.style.transition = "transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)";
-            cont.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRot}deg) scale(${scale})`;
-            
-            drawScratchCover(escapes); // Repaint with the new funny text
-        } else {
-            // THE SURRENDER: Bounce perfectly back to the center
-            cont.style.transition = "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)"; // Super bouncy CSS
-            cont.style.transform = `translate(0px, 0px) rotate(0deg) scale(1)`;
-            drawScratchCover(escapes);
-        }
-    } else {
-        // Game over. Let her scratch normally!
-        isScratching = true;
-        const pos = getScratchPos(e);
-        lastX = pos.x;
-        lastY = pos.y;
-        scratch(e);
-    }
-}
-
-function getScratchPos(e) {
-    const rect = sCanvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: clientX - rect.left, y: clientY - rect.top };
-}
-
-function scratch(e) {
-    if (!isScratching) return;
-    e.preventDefault(); 
-
-    const pos = getScratchPos(e);
-    
-    sCtx.beginPath();
-    sCtx.moveTo(lastX, lastY);
-    sCtx.lineTo(pos.x, pos.y);
-    sCtx.lineWidth = 40; 
-    sCtx.lineCap = "round";
-    sCtx.lineJoin = "round";
-    sCtx.stroke();
-    
-    lastX = pos.x;
-    lastY = pos.y;
-}
-
-function endScratch() {
-    isScratching = false;
-}
-
-// ============ FLOATING MEMORY BUBBLES LOGIC ============
 // ============ FLOATING MEMORY BUBBLES LOGIC ============
 const MEMORIES = [
     // 1. Just text
@@ -1872,38 +1753,60 @@ function fadeOutMusic(duration) {
     }, duration / steps);
 }
 
-// ============ REVEAL SCRATCH CARD LOGIC ============
+// ============ COFFEE INVITATION & WEBHOOK LOGIC ============
+// 👉 Paste your actual Discord Webhook URL right here inside the quotes!
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1534157023623516224/07_3EG93GPJcqHqpKQZwzjOdqzXMTtRsJIytQvjc3ymwmfvoCtoZ47xIpQYBIVzZhuKI";
+
 function showScratchCard(e) {
+    // We kept the function name 'showScratchCard' so your HTML button still triggers it!
     addButtonPop(e.target);
 
     const btn = document.getElementById("revealScratchBtn");
-    const scratchCont = document.getElementById("scratchContainer");
+    const coffeeCont = document.getElementById("coffeeContainer");
 
-    // Fade out the button
+    // Fade out the reveal button
     btn.style.opacity = 0;
     btn.style.pointerEvents = "none";
     
     setTimeout(() => {
         btn.style.display = "none";
+        coffeeCont.style.display = "block"; 
         
-        // Show the container so the canvas can calculate its exact pixel size
-        scratchCont.style.display = "block"; 
-        
-        // Paint the frosted coating NOW that it is unhidden
-        initScratchCard();
-
-        // Small delay to allow CSS to register before fading in smoothly
         setTimeout(() => {
-            scratchCont.style.opacity = 1;
-            
-            // Auto-scroll the phone screen down slightly so the ticket is perfectly centered!
-            scratchCont.scrollIntoView({ behavior: "smooth", block: "center" });
-            
-            // Pop some sparkles for the reveal
+            coffeeCont.style.opacity = 1;
+            coffeeCont.scrollIntoView({ behavior: "smooth", block: "center" });
             createParticles(window.innerWidth / 2, window.innerHeight - 100, "✨", 10);
         }, 50);
-        
     }, 400);
+}
+
+function sendCoffeeResponse(answer) {
+    triggerVibration([30, 40]); // Happy double-tap vibration
+    
+    // 1. Instantly hide the buttons and show the polite thank you text
+    const btns = document.getElementById("coffeeButtons");
+    const thankYou = document.getElementById("coffeeThankYou");
+    
+    btns.style.opacity = 0;
+    setTimeout(() => {
+        btns.style.display = "none";
+        thankYou.style.display = "block";
+        setTimeout(() => thankYou.style.opacity = 1, 50);
+    }, 300);
+
+    // 2. Silently send the webhook to your Discord!
+    if (DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL !== "YOUR_DISCORD_WEBHOOK_URL_HERE") {
+        fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: `🚨 **Birthday Update!** 🎀\nSupriya reached the end of the website and clicked:\n> **"${answer}"**`
+            })
+        }).catch(err => {
+            // We put a silent catch block here. If her internet drops, the site WON'T hang or lag. 
+            console.log("Silent webhook error"); 
+        }); 
+    }
 }
 
 // ============ SECRET PASSWORD LOGIC ============
