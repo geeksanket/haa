@@ -34,7 +34,12 @@
 
 *{ margin:0; padding:0; box-sizing:border-box; }
 
-html{ background:var(--bg); scroll-behavior:auto; }
+/* NATIVE SCROLL SNAPPING */
+html { 
+  background:var(--bg); 
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
 
 body{
   background:var(--bg);
@@ -44,8 +49,6 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   overflow-x:hidden;
-  overscroll-behavior-y: none; /* Kills the mobile bounce */
-  touch-action: pan-y; /* Streamlines touch panning */
 }
 
 h1,h2,h3,.serif{ font-family:var(--serif); font-weight:500; letter-spacing:-0.01em; color:var(--ink); }
@@ -55,7 +58,7 @@ h1,h2,h3,.serif{ font-family:var(--serif); font-weight:500; letter-spacing:-0.01
 /* Optimized grain */
 .grain{
   position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0.015; mix-blend-mode:multiply;
-  transform: translateZ(0); /* Hardware acceleration */
+  transform: translateZ(0); 
   will-change: transform;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -68,15 +71,28 @@ h1,h2,h3,.serif{ font-family:var(--serif); font-weight:500; letter-spacing:-0.01
   display:flex; justify-content:center;
 }
 #thread .track{ position:absolute; top:0; bottom:0; width:1px; background:var(--line); }
-#thread .fill{ position:absolute; top:0; left:0; width:1px; height:0%; background:linear-gradient(var(--rose-bright), var(--rose)); }
-#thread .bud{ position:absolute; left:50%; top:0%; transform:translate(-50%,-50%); font-size:14px; transition:font-size .3s; }
+#thread .fill{ position:absolute; top:0; left:0; width:1px; height:0%; background:linear-gradient(var(--rose-bright), var(--rose)); transition: height 0.1s; }
+#thread .bud{ position:absolute; left:50%; top:0%; transform:translate(-50%,-50%); font-size:14px; transition: top 0.1s, font-size 0.3s; }
 @media (max-width: 640px){ #thread{ left:10px; } }
 
 /* ============================================================
-   LAYOUT PRIMITIVES
+   SNAP SECTIONS (The new scroll mechanism)
    ============================================================ */
-section{ position:relative; width:100%; }
-.wrap{ max-width:640px; margin:0 auto; padding:0 28px; }
+.snap-section {
+  width: 100%;
+  min-height: 100svh;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.wrap{ max-width:640px; margin:0 auto; width:100%; }
 .eyebrow{
   font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase;
   color:var(--rose); font-weight:600; margin-bottom:14px; display:block;
@@ -85,13 +101,8 @@ section{ position:relative; width:100%; }
 /* ============================================================
    HERO
    ============================================================ */
-#hero{
-  height:100svh; display:flex; flex-direction:column; justify-content:center; align-items:center;
-  text-align:center; padding:0 24px; position:relative;
-}
-#hero .petal-field{ position:absolute; inset:0; overflow:hidden; z-index:0; }
 #hero-title{
-  font-size:clamp(2.6rem, 9vw, 5.4rem); line-height:0.98; position:relative; z-index:2;
+  font-size:clamp(2.2rem, 8vw, 4.8rem); line-height:0.98; position:relative; z-index:2;
 }
 #hero-title .line{ display:block; overflow:hidden; }
 #hero-title .line span{ display:inline-block; will-change:transform; }
@@ -110,33 +121,20 @@ section{ position:relative; width:100%; }
 /* ============================================================
    WHISPER
    ============================================================ */
-#whisper{ height:420vh; }
-#whisper .stage{
-  position:sticky; top:0; height:100svh; display:flex; align-items:center; justify-content:center;
-  text-align:center; padding:0 24px; overflow:hidden;
-}
-#whisper .line{
-  position:absolute; font-family:var(--serif); font-weight:400;
-  font-size:clamp(1.6rem,5.6vw,3rem); color:var(--ink); max-width:760px; opacity:0;
+.whisper-sec .line {
+  font-family:var(--serif); font-weight:400;
+  font-size:clamp(1.6rem,6vw,3rem); color:var(--ink); max-width:760px;
 }
 
 /* ============================================================
-   MEMORIES
+   MEMORIES (VIDEO SECTION)
    ============================================================ */
-#memories{ height:260vh; background:var(--bg-deep); }
-#memories .stage{
-  position:sticky; top:0; height:100vh; overflow:hidden;
-  display:flex; align-items:center; justify-content:center; flex-direction:column;
-}
-#memories .heading{
-  position:absolute; top:9%; left:0; right:0; text-align:center; z-index:3; pointer-events:none;
-}
-#memories .heading .eyebrow{ display:block; }
-#memories .heading h2{ font-size:clamp(1.6rem,5vw,2.6rem); }
+#memories{ background:var(--bg-deep); }
+#memories .heading h2{ font-size:clamp(1.6rem,5vw,2.6rem); margin-bottom:24px; }
 #memories .frame{
-  width:min(86vw,460px); aspect-ratio:9/16; max-height:72vh; border-radius:8px; overflow:hidden;
+  width:min(90vw,420px); aspect-ratio:9/16; max-height:70vh; border-radius:12px; overflow:hidden;
   position:relative; box-shadow:0 30px 60px -20px rgba(58,37,48,0.28);
-  display:flex; align-items:center; justify-content:center; background:#111;
+  background:#111;
 }
 #memories .frame video, #memories .frame img{
   width:100%; height:100%; object-fit:contain; display:block; margin:auto; background:#111;
@@ -144,31 +142,29 @@ section{ position:relative; width:100%; }
 #memories .frame .cap{
   position:absolute; left:0; right:0; bottom:0; padding:16px 20px;
   background:linear-gradient(transparent, rgba(0,0,0,0.6));
-  color:#fff; font-size:0.9rem; letter-spacing:0.02em; text-align:center;
+  color:#fff; font-size:0.9rem; letter-spacing:0.02em; text-align:center; z-index:5;
 }
-#memories .frame.placeholder{
-  background:var(--blush); color:var(--rose); font-family:var(--serif); font-size:2rem;
+.video-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;
+  color: #fff; font-family: var(--sans); font-size: 1.1rem; font-weight: 500;
+  z-index: 10; cursor: pointer; transition: opacity 0.3s ease;
 }
+.video-overlay .icon { font-size: 2.5rem; }
 
 /* ============================================================
    BUILD-UP
    ============================================================ */
-#buildup{ padding:26vh 0; background:var(--bg); }
-#buildup .wrap{ max-width:720px; }
+#buildup{ background:var(--bg); }
 #buildup p{
-  font-family:var(--serif); font-weight:400; font-size:clamp(1.5rem,4.2vw,2.5rem);
+  font-family:var(--serif); font-weight:400; font-size:clamp(1.5rem,5vw,2.8rem);
   line-height:1.4; color:var(--ink-soft);
 }
-#buildup .mask{ overflow:hidden; display:inline; }
-#buildup .mask span{ display:inline-block; opacity:0.08; }
 
 /* ============================================================
    CELEBRATION
    ============================================================ */
-#celebration{
-  height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; position:relative; background:var(--bg-deep);
-}
+#celebration{ background:var(--bg-deep); }
 #flower-btn{
   font-size:clamp(4rem,18vw,7rem); cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
   filter:drop-shadow(0 10px 24px rgba(255,141,161,0.35)); transition:transform .25s ease;
@@ -192,8 +188,7 @@ section{ position:relative; width:100%; }
 /* ============================================================
    FINALE
    ============================================================ */
-#finale{ background:var(--bg); padding:16vh 0 10vh; }
-#finale .wrap{ max-width:720px; }
+#finale{ background:var(--bg); padding:10vh 0; scroll-snap-align: start; }
 #finale h2{ font-size:clamp(2rem,6vw,3.2rem); margin-bottom:12px; }
 #finale .sub{ color:var(--ink-soft); margin-bottom:60px; }
 
@@ -242,7 +237,7 @@ section{ position:relative; width:100%; }
 .coffee .no{ background:transparent; color:#4a7c44; border:1px solid #b9d1b3; }
 .coffee .thanks{ display:none; color:#33512f; font-weight:600; }
 
-footer{ text-align:center; padding:60px 24px 100px; color:var(--ink-faint); font-size:0.78rem; letter-spacing:0.06em; }
+footer{ text-align:center; padding:60px 24px 100px; color:var(--ink-faint); font-size:0.78rem; letter-spacing:0.06em; margin-top: 40px; }
 
 /* ============================================================
    AUDIO CONTROL
@@ -256,34 +251,24 @@ footer{ text-align:center; padding:60px 24px 100px; color:var(--ink-faint); font
 #audio-btn.spin{ animation:spin 4s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-/* particles */
 .particle{ position:fixed; pointer-events:none; z-index:999; font-size:18px; will-change:transform; }
 @keyframes floatAway{ to{ transform:translate(var(--tx),var(--ty)) scale(1.2); opacity:0; } }
 
-/* reduced motion */
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
-}
-
-@media (max-width:640px){
-  .wrap{ padding:0 20px; }
-  #memories .track{ gap:8vw; }
 }
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     CONFIGURATION
-     ADD YOUR IMAGES AND MEDIA HERE
-     ============================================================ -->
 <script>
 const CONFIG = {
   herName: "Supriya",
   yourName: "Sanket",
 
   hero: {
-    titleLines: ["Dear", "Supriya"],
+    // TWEAK 1: Updated to Happy Birthday
+    titleLines: ["Happy Birthday,", "Supriya"],
     subtitle: "I made you something. Keep scrolling."
   },
 
@@ -296,10 +281,7 @@ const CONFIG = {
     "let's begin."
   ],
 
-  // ADD IMAGE HERE: The quiet portrait reveal
-  introImage: "image1.jpeg", 
-
-  // ADD VIDEO/IMAGE HERE: The main memory section
+  // TWEAK 2: Add your video path here. It will now lock perfectly and play audio.
   memories: [
     { type: "video", src: "editedvideofinal.mp4", caption: "before we go further — just watch." }
   ],
@@ -311,7 +293,6 @@ const CONFIG = {
     hint: "Hint: the prettiest girl I know."
   },
 
-  // ADD IMAGES HERE: The finale photo gallery
   finalCarousel: ["image1.jpeg", "image2.jpg"],
 
   letter: `Happy Birthday!! 🥳🎂
@@ -341,7 +322,7 @@ once again — Happiesttt Birthday! 🌻`,
 
   music: {
     enabled: true,
-    playlist: ["track1.mp3", "track2.mp3", "track3.mp3", "track4.mp3"],
+    playlist: ["track1.mp3", "track2.mp3"],
     climax: "trackclimax.mp3"
   },
 
@@ -350,46 +331,44 @@ once again — Happiesttt Birthday! 🌻`,
 </script>
 
 <div class="grain"></div>
-
 <div id="thread"><div class="track"></div><div class="fill"></div><div class="bud">🌱</div></div>
-
 <canvas id="confetti" style="position:fixed;inset:0;z-index:50;pointer-events:none;"></canvas>
 <div id="flash"></div>
 <div id="suspense"><p>Make a wish... ✨</p></div>
-
 <div id="audio-btn" title="music"></div>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="petal-field"></div>
+<section id="hero" class="snap-section">
   <h1 id="hero-title"></h1>
   <p id="hero-sub"></p>
-  <div id="scroll-cue"><span>scroll</span><span class="stem"></span></div>
+  <div id="scroll-cue"><span>swipe up</span><span class="stem"></span></div>
 </section>
 
-<!-- WHISPER -->
-<section id="whisper"><div class="stage" id="whisper-stage"></div></section>
+<!-- WHISPER CONTAINER (Sections generated via JS) -->
+<div id="whisper-container"></div>
 
-<!-- MEMORIES -->
-<section id="memories">
-  <div class="stage">
-    <div class="heading"><span class="eyebrow">Before we continue</span><h2>Just watch, for a moment.</h2></div>
+<!-- MEMORIES (Locked perfectly in center) -->
+<section id="memories" class="snap-section">
+  <div class="wrap">
+    <div class="heading"><h2>Just watch, for a moment.</h2></div>
     <div class="frame" id="memories-frame"></div>
   </div>
 </section>
 
 <!-- BUILD-UP -->
-<section id="buildup" class="wrap"><p id="buildup-text"></p></section>
+<section id="buildup" class="snap-section">
+  <div class="wrap"><p id="buildup-text"></p></div>
+</section>
 
 <!-- CELEBRATION -->
-<section id="celebration">
+<section id="celebration" class="snap-section">
   <div id="flower-btn">🌸</div>
   <div class="hint" id="flower-hint">tap the flower</div>
 </section>
 
 <!-- FINALE -->
-<section id="finale">
-  <div class="wrap" style="text-align:center;">
+<section id="finale" class="snap-section">
+  <div class="wrap" style="text-align:center; padding-top: 40px;">
     <span class="eyebrow">The reveal</span>
     <h2>For you.</h2>
     <p class="sub">Swipe through, then unlock the rest.</p>
@@ -425,13 +404,32 @@ once again — Happiesttt Birthday! 🌻`,
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-ScrollTrigger.config({ ignoreMobileResize: true });
-if(!reduceMotion){ ScrollTrigger.normalizeScroll(true); }
-document.fonts && document.fonts.ready.then(()=>ScrollTrigger.refresh());
-window.addEventListener('load', ()=>ScrollTrigger.refresh());
+/* ---------------- audio setup ---------------- */
+const bgMusic=new Audio(); bgMusic.loop=false; bgMusic.preload='auto';
+const audioBtn=document.getElementById('audio-btn');
+let musicPlaying=false, trackIndex=0;
 
+if(CONFIG.music.enabled && CONFIG.music.playlist.length){ bgMusic.src=CONFIG.music.playlist[0]; }
+bgMusic.addEventListener('ended', ()=>{
+  if(!CONFIG.music.playlist.length) return;
+  trackIndex=(trackIndex+1)%CONFIG.music.playlist.length;
+  bgMusic.src=CONFIG.music.playlist[trackIndex];
+  bgMusic.play().catch(()=>{});
+});
+
+audioBtn.addEventListener('click', ()=>{
+  if(musicPlaying){ bgMusic.pause(); audioBtn.classList.remove('spin'); }
+  else { bgMusic.volume=1; bgMusic.play().catch(()=>{}); audioBtn.classList.add('spin'); }
+  musicPlaying=!musicPlaying;
+});
+
+function fadeOutMusic(duration){
+  const steps=20; let vol=bgMusic.volume; const step=vol/steps;
+  const iv=setInterval(()=>{ vol-=step; if(vol<=0){ vol=0; clearInterval(iv);} bgMusic.volume=vol; }, duration/steps);
+}
+
+/* ---------------- helpers ---------------- */
 function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
 function triggerVibration(p){ if(navigator.vibrate) navigator.vibrate(p); }
 function createParticles(x,y,emoji="🌸",count=8){
@@ -447,6 +445,7 @@ function createParticles(x,y,emoji="🌸",count=8){
   }
 }
 
+/* ---------------- confetti ---------------- */
 const canvas=document.getElementById('confetti'), ctx=canvas.getContext('2d');
 function fitCanvas(){ canvas.width=innerWidth; canvas.height=innerHeight; }
 fitCanvas(); addEventListener('resize',fitCanvas);
@@ -472,17 +471,21 @@ function tick(){
   pieces.length>0 ? requestAnimationFrame(tick) : (running=false);
 }
 
+/* ---------------- NATIVE SCROLL PROGRESS ---------------- */
 const threadFill=document.querySelector('#thread .fill');
 const bud=document.querySelector('#thread .bud');
-ScrollTrigger.create({
-  trigger:document.body, start:'top top', end:'bottom bottom', scrub:1,
-  onUpdate: self=>{
-    threadFill.style.height=(self.progress*100)+'%';
-    bud.style.top=(self.progress*100)+'%';
-    bud.textContent = self.progress>0.97 ? '🌸' : (self.progress>0.4 ? '🌷' : '🌱');
-  }
+
+window.addEventListener('scroll', () => {
+  // Calculate scroll progress natively based on document height
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = Math.min(Math.max(window.scrollY / scrollHeight, 0), 1);
+  
+  threadFill.style.height = (progress * 100) + '%';
+  bud.style.top = (progress * 100) + '%';
+  bud.textContent = progress > 0.97 ? '🌸' : (progress > 0.4 ? '🌷' : '🌱');
 });
 
+/* ---------------- HERO ---------------- */
 (function heroBuild(){
   const title=document.getElementById('hero-title');
   CONFIG.hero.titleLines.forEach(line=>{
@@ -497,63 +500,80 @@ ScrollTrigger.create({
   tl.from(title.querySelectorAll('.line span'), {yPercent:120, opacity:0, duration:1, ease:'power4.out', stagger:0.02})
     .to('#hero-sub',{opacity:1,duration:0.8},'-=0.3')
     .to('#scroll-cue',{opacity:1,duration:0.8},'-=0.4');
-
-  gsap.to('#hero-title,#hero-sub',{ yPercent:-18, opacity:0, ease:'none',
-    scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:1 } });
 })();
 
+/* ---------------- WHISPER (Snap Sections) ---------------- */
 (function whisperBuild(){
-  const stage=document.getElementById('whisper-stage');
-  const lines = CONFIG.whisper.map(text=>{
-    const l=el('div','line',text); stage.appendChild(l); return l;
-  });
-  const n=lines.length;
-  const tl=gsap.timeline({
-    scrollTrigger:{ trigger:'#whisper', start:'top top', end:'bottom bottom', scrub:1, pin:'.stage' }
-  });
-  lines.forEach((l,i)=>{
-    tl.fromTo(l,{opacity:0,y:26,scale:0.96},{opacity:1,y:0,scale:1,duration:0.35})
-      .to(l,{opacity:0,y:-26,duration:0.35}, i<n-1 ? '+=0.5' : '+=0.9');
+  const container = document.getElementById('whisper-container');
+  CONFIG.whisper.forEach((text, i) => {
+    const sec = el('section', 'snap-section whisper-sec');
+    sec.innerHTML = `<div class="wrap"><div class="line" style="opacity:0; transform:translateY(20px);">${text}</div></div>`;
+    container.appendChild(sec);
+
+    // Fade text in simply when it snaps into view
+    gsap.to(sec.querySelector('.line'), {
+      opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+      scrollTrigger: { trigger: sec, start: "top 70%", toggleActions: "play none none reverse" }
+    });
   });
 })();
 
+/* ---------------- MEMORIES (Video with Audio Unlock) ---------------- */
 (function memoriesBuild(){
   const frame=document.getElementById('memories-frame');
   const item = (CONFIG.memories && CONFIG.memories[0]) || {type:'placeholder'};
-  let mediaEl=null;
-
+  
   if(item.type==='video'){
-    mediaEl=document.createElement('video');
-    mediaEl.src=item.src; mediaEl.muted=true; mediaEl.loop=true; mediaEl.playsInline=true; mediaEl.autoplay=true;
+    const mediaEl=document.createElement('video');
+    mediaEl.src=item.src; 
+    mediaEl.loop=true; 
+    mediaEl.playsInline=true;
+    // TWEAK 2 FIX: Start muted so it can autoplay natively when in view
+    mediaEl.muted = true;
+    mediaEl.autoplay = true; 
     frame.appendChild(mediaEl);
-    mediaEl.addEventListener('loadedmetadata', ()=>ScrollTrigger.refresh());
-    mediaEl.play().catch(()=>{});
-  } else if(item.type==='image'){
-    mediaEl=document.createElement('img'); mediaEl.src=item.src;
-    mediaEl.addEventListener('load', ()=>ScrollTrigger.refresh());
-    frame.appendChild(mediaEl);
-  } else {
-    frame.classList.add('placeholder'); frame.textContent='🌷';
-  }
-  if(item.caption){ frame.appendChild(el('div','cap',item.caption)); }
 
-  const tl=gsap.timeline({
-    scrollTrigger:{ trigger:'#memories', start:'top top', end:'bottom bottom',
-      scrub:1, pin:'.stage', pinSpacing:true, invalidateOnRefresh:true }
-  });
-  gsap.set(frame, {scale:0.82, opacity:0});
-  tl.to(frame, {scale:1, opacity:1, ease:'none', duration:1})
-    .to(frame, {scale:0.9, opacity:0, ease:'none', duration:1});
+    // Overlay to trigger unmuting
+    const overlay = el('div', 'video-overlay', `
+      <span class="icon">🔇</span>
+      <span>Tap for Sound</span>
+    `);
+    frame.appendChild(overlay);
+
+    overlay.addEventListener('click', () => {
+      mediaEl.muted = false;
+      mediaEl.currentTime = 0; // restart the video for the full effect
+      mediaEl.play();
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+
+      // Pause background music if it is playing
+      if(musicPlaying) {
+        bgMusic.pause();
+        audioBtn.classList.remove('spin');
+        musicPlaying = false;
+      }
+    });
+
+  } else if(item.type==='image'){
+    const mediaEl=document.createElement('img'); mediaEl.src=item.src;
+    frame.appendChild(mediaEl);
+  }
+  
+  if(item.caption){ frame.appendChild(el('div','cap',item.caption)); }
 })();
 
+/* ---------------- BUILD-UP ---------------- */
 (function buildupBuild(){
   const p=document.getElementById('buildup-text');
-  const words=CONFIG.buildupLine.split(' ');
-  p.innerHTML = words.map(w=>`<span class="mask"><span>${w}&nbsp;</span></span>`).join('');
-  gsap.to(p.querySelectorAll('.mask span'), { opacity:1, stagger:0.04, ease:'none',
-    scrollTrigger:{ trigger:'#buildup', start:'top 70%', end:'bottom 60%', scrub:1 } });
+  p.textContent = CONFIG.buildupLine;
+  gsap.fromTo(p, {opacity: 0, y: 20}, {
+    opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+    scrollTrigger: { trigger: '#buildup', start: "top 75%", toggleActions: "play none none reverse" }
+  });
 })();
 
+/* ---------------- CELEBRATION ---------------- */
 let opened=false;
 gsap.to('#flower-hint',{ opacity:0.75, duration:0.6,
   scrollTrigger:{ trigger:'#celebration', start:'top 60%', onEnter:()=>document.getElementById('flower-hint').classList.add('show') } });
@@ -588,6 +608,7 @@ document.getElementById('flower-btn').addEventListener('click', (e)=>{
   },500);
 });
 
+/* ---------------- FINALE: carousel ---------------- */
 (function carouselBuild(){
   const car=document.getElementById('carousel'), dots=document.getElementById('carousel-dots');
   const imgs = (CONFIG.finalCarousel && CONFIG.finalCarousel.length) ? CONFIG.finalCarousel : [null];
@@ -603,6 +624,7 @@ document.getElementById('flower-btn').addEventListener('click', (e)=>{
   });
 })();
 
+/* ---------------- FINALE: password gate + letter ---------------- */
 document.getElementById('gate-hint').textContent = CONFIG.password.hint;
 document.getElementById('gate-btn').addEventListener('click', checkPassword);
 document.getElementById('gate-input').addEventListener('keypress', e=>{ if(e.key==='Enter') checkPassword(); });
@@ -664,31 +686,10 @@ function sendCoffeeResponse(answer){
   }
 }
 
-const bgMusic=new Audio(); bgMusic.loop=false; bgMusic.preload='auto';
-const audioBtn=document.getElementById('audio-btn');
-let musicPlaying=false, trackIndex=0;
-if(CONFIG.music.enabled && CONFIG.music.playlist.length){ bgMusic.src=CONFIG.music.playlist[0]; }
-bgMusic.addEventListener('ended', ()=>{
-  if(!CONFIG.music.playlist.length) return;
-  trackIndex=(trackIndex+1)%CONFIG.music.playlist.length;
-  bgMusic.src=CONFIG.music.playlist[trackIndex];
-  bgMusic.play().catch(()=>{});
-});
-audioBtn.addEventListener('click', ()=>{
-  if(musicPlaying){ bgMusic.pause(); audioBtn.classList.remove('spin'); }
-  else { bgMusic.volume=1; bgMusic.play().catch(()=>{}); audioBtn.classList.add('spin'); }
-  musicPlaying=!musicPlaying;
-});
-function fadeOutMusic(duration){
-  const steps=20; let vol=bgMusic.volume; const step=vol/steps;
-  const iv=setInterval(()=>{ vol-=step; if(vol<=0){ vol=0; clearInterval(iv);} bgMusic.volume=vol; }, duration/steps);
-}
-
 const originalTitle=document.title;
 addEventListener('blur',()=>document.title='Come back! 🥺🌻');
 addEventListener('focus',()=>document.title=originalTitle);
 
-ScrollTrigger.refresh();
 </script>
 </body>
 </html>
