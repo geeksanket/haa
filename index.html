@@ -45,22 +45,39 @@ h1,h2,h3,.serif{ font-family:var(--serif); font-weight:500; color:var(--ink); }
 ::selection{ background:var(--blush); color:var(--ink); }
 
 /* ============================================================
-   CINEMATIC INTRO (FOOLPROOF PACING)
+   INTRO SCREEN (MANUAL PROGRESSION)
    ============================================================ */
 #intro-lock {
   position: fixed; inset: 0; z-index: 9999;
   background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 24px; text-align: center;
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 #intro-text {
   font-family: var(--serif);
   font-size: clamp(1.8rem, 6vw, 3rem);
   color: var(--ink);
-  opacity: 0;
-  transition: opacity 0.8s ease;
+  margin-bottom: 40px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
 }
+#intro-next-btn {
+  background: transparent;
+  border: 1px solid var(--ink-faint);
+  color: var(--ink-soft);
+  padding: 10px 28px;
+  border-radius: 30px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#intro-next-btn:active { transform: scale(0.95); background: var(--bg-deep); }
 
 /* ============================================================
    LAYOUT PRIMITIVES
@@ -76,27 +93,42 @@ section{ position:relative; width:100%; min-height: 90vh; display: flex; flex-di
 #hero-sub{ font-size:1.1rem; color:var(--ink-soft); }
 
 /* ============================================================
-   VIDEO SECTION
+   VIDEO SECTION (IN-PAGE POPUP)
    ============================================================ */
-#memories { background: var(--bg-deep); padding: 0; min-height: 100vh; }
-.video-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100vh;
+#memories { background: var(--bg-deep); min-height: 60vh; }
+#open-video-btn {
+  background: transparent;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  padding: 14px 34px;
+  border-radius: 40px;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#open-video-btn:active { transform: scale(0.96); background: rgba(58,37,48,0.05); }
+
+#video-modal {
+  position: fixed; inset: 0;
+  background: rgba(10, 10, 10, 0.95);
+  z-index: 10000;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+#close-video-btn {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: none; color: #fff;
+  font-size: 2.5rem; font-family: var(--sans);
+  cursor: pointer; padding: 10px;
+}
+#popup-video {
+  width: 90%; max-width: 450px;
+  max-height: 80vh;
+  border-radius: 8px;
   background: #000;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
-.video-wrapper video {
-  width: 100%; height: 100%; object-fit: contain;
-}
-#video-overlay {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: #fff; font-family: var(--sans); cursor: pointer; z-index: 10;
-  transition: opacity 0.3s;
-}
-#video-overlay .icon { font-size: 3rem; margin-bottom: 10px; }
-#video-overlay h3 { color: #fff; font-family: var(--sans); font-size: 1.5rem; letter-spacing: 1px; }
 
 /* ============================================================
    BUILD-UP
@@ -132,9 +164,9 @@ section{ position:relative; width:100%; min-height: 90vh; display: flex; flex-di
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
-.carousel::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.carousel::-webkit-scrollbar { display: none; }
 
 .carousel .slide {
   flex: 0 0 100%;
@@ -158,8 +190,9 @@ section{ position:relative; width:100%; min-height: 90vh; display: flex; flex-di
 .coffee .yes{ background:var(--sage); color:#fff; }
 .coffee .no{ background:transparent; color:#4a7c44; border:1px solid #b9d1b3; }
 
-#audio-btn{ position:fixed; bottom:20px; right:20px; z-index:80; width:45px; height:45px; border-radius:50%; background:#241318; border:2px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; }
+#audio-btn{ position:fixed; bottom:20px; right:20px; z-index:80; width:45px; height:45px; border-radius:50%; background:#241318; border:2px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center; cursor: pointer; transition: 0.3s;}
 #audio-btn::after{ content:'🎵'; font-size: 18px; }
+#audio-btn.muted::after{ content:'🔇'; }
 
 canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
 </style>
@@ -174,7 +207,7 @@ const CONFIG = {
   herName: "Supriya",
   yourName: "Sanket",
 
-  // 1. The Intro Text that plays automatically on load
+  // 1. The Intro Text (Now clicked through manually)
   whisper: [
     "Hey...",
     "Can I borrow two minutes of your day?",
@@ -184,7 +217,7 @@ const CONFIG = {
     "let's begin."
   ],
 
-  // 2. The Fullscreen Video 
+  // 2. The Video path
   videoSrc: "editedvideofinal.mp4",
 
   buildupLine: "Two months in, and I already know your \u201chaa\u201d is a whole language of its own.",
@@ -203,11 +236,11 @@ Waise 2 mahine mein maine itna toh notice kar hi liya hai —
 "haaa" tumhara universal reply hai.
 Aur plans change karna... I don't think that's a habit anymore, it's a lifestyle. 😂
 
-I genuinely hope ye saal tumhare liye bohot acha ho.
+I genuinely hope ye saal tumhare liye bohot acha ho. (and i mean it)
 Jo bhi tum deserve karti ho, sab aapke charano me aa jaye.
 Aur jitna tum dusro ko smile karati ho, utni hi smiles tumhe bhi mile.
 
-Baaki, aaj ke din bas khush rehna.
+Baaki, aaj ke din bas khush rehna. (buzurg sanket ka ashirwad le lijiye)
 Aur cake share karna... (Just kidding. Mat karna. karogi bhi kaise!!)
 
 once again — Happiesttt Birthday! 🌻`,
@@ -224,8 +257,11 @@ once again — Happiesttt Birthday! 🌻`,
 };
 </script>
 
-<!-- AUTO-PLAYING INTRO -->
-<div id="intro-lock"><div id="intro-text"></div></div>
+<!-- MANUAL INTRO SCREEN -->
+<div id="intro-lock">
+  <div id="intro-text"></div>
+  <button id="intro-next-btn">Next &rarr;</button>
+</div>
 
 <canvas id="confetti"></canvas>
 <div id="audio-btn"></div>
@@ -236,16 +272,16 @@ once again — Happiesttt Birthday! 🌻`,
   <p id="hero-sub">Keep scrolling downwards ↓</p>
 </section>
 
-<!-- FULLSCREEN VIDEO -->
+<!-- IN-PAGE VIDEO POPUP SECTION -->
 <section id="memories">
-  <div class="video-wrapper">
-    <video id="main-video" playsinline loop></video>
-    <div id="video-overlay">
-      <div class="icon">🔊</div>
-      <h3>TAP FOR SOUND<br>& FULLSCREEN</h3>
-    </div>
-  </div>
+  <button id="open-video-btn">i tried editing a video</button>
 </section>
+
+<!-- THE ACTUAL POPUP (HIDDEN BY DEFAULT) -->
+<div id="video-modal">
+  <button id="close-video-btn">&times;</button>
+  <video id="popup-video" controls playsinline></video>
+</div>
 
 <!-- BUILD-UP -->
 <section id="buildup">
@@ -257,7 +293,6 @@ once again — Happiesttt Birthday! 🌻`,
   <div id="flower-btn">🌸</div>
   <p style="color:var(--rose); margin-top:10px; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;" id="flower-hint">Tap to make a wish</p>
   
-  <!-- This is the text that reveals AFTER tapping the flower -->
   <h1 id="birthday-reveal-text">Happy Birthday,<br>Supriya! 🥳</h1>
 </section>
 
@@ -266,11 +301,9 @@ once again — Happiesttt Birthday! 🌻`,
   <div class="wrap">
     <h2 style="margin-bottom: 30px;">For you.</h2>
     
-    <!-- Fixed Horizontal Carousel -->
     <div class="carousel" id="carousel"></div>
     <p style="color:var(--ink-soft); font-size:0.9rem; margin-bottom: 40px;">← Swipe to view →</p>
 
-    <!-- Password Gate -->
     <div class="gate" id="gate">
       <h3>Secret Password 🔐</h3>
       <p id="gate-hint"></p>
@@ -292,65 +325,99 @@ once again — Happiesttt Birthday! 🌻`,
 </section>
 
 <script>
-/* ---------------- 1. THE INTRO SEQUENCE ---------------- */
-// This guarantees she reads the whisper text before she can scroll.
-window.onload = () => {
-  const textEl = document.getElementById('intro-text');
-  const lockScreen = document.getElementById('intro-lock');
-  const lines = CONFIG.whisper;
-  let index = 0;
+/* ---------------- 1. BACKGROUND MUSIC SETUP ---------------- */
+const bgMusic = new Audio();
+let musicPlaying = false;
+if(CONFIG.music.playlist.length) bgMusic.src = CONFIG.music.playlist[0];
+bgMusic.loop = true;
 
-  function showNextLine() {
-    if (index < lines.length) {
-      textEl.textContent = lines[index];
-      textEl.style.opacity = 1;
-      
-      setTimeout(() => {
-        textEl.style.opacity = 0;
-        index++;
-        setTimeout(showNextLine, 800); // Time between sentences
-      }, 2000); // Time sentence stays on screen
-    } else {
-      // Unlock the page
-      lockScreen.style.opacity = 0;
-      setTimeout(() => {
-        lockScreen.style.display = 'none';
-        document.body.classList.remove('locked');
-      }, 1000);
-    }
-  }
-  
-  // Start sequence 1 second after page loads
-  setTimeout(showNextLine, 1000);
-};
-
-/* ---------------- 2. FULLSCREEN VIDEO FIX ---------------- */
-const video = document.getElementById('main-video');
-const overlay = document.getElementById('video-overlay');
-video.src = CONFIG.videoSrc;
-
-overlay.addEventListener('click', () => {
-  // Unmute and play
-  video.muted = false;
-  video.currentTime = 0;
-  video.play();
-  
-  // Hide overlay
-  overlay.style.opacity = '0';
-  setTimeout(() => overlay.style.display = 'none', 300);
-  
-  // Pause background music if playing
-  if(musicPlaying) { bgMusic.pause(); musicPlaying = false; }
-
-  // Force Native Fullscreen (Works on iOS and Android)
-  if (video.requestFullscreen) {
-    video.requestFullscreen();
-  } else if (video.webkitEnterFullscreen) {
-    video.webkitEnterFullscreen();
+const audioBtn = document.getElementById('audio-btn');
+audioBtn.addEventListener('click', () => {
+  if(musicPlaying) { 
+    bgMusic.pause(); 
+    musicPlaying = false; 
+    audioBtn.classList.add('muted');
+  } else { 
+    bgMusic.play().catch(()=>{}); 
+    musicPlaying = true; 
+    audioBtn.classList.remove('muted');
   }
 });
 
-/* ---------------- 3. FLOWER & BIRTHDAY REVEAL ---------------- */
+/* ---------------- 2. MANUAL INTRO SEQUENCE ---------------- */
+window.onload = () => {
+  let introIdx = 0;
+  const introText = document.getElementById('intro-text');
+  const introNextBtn = document.getElementById('intro-next-btn');
+  const lockScreen = document.getElementById('intro-lock');
+  
+  // Set first line immediately
+  introText.textContent = CONFIG.whisper[introIdx];
+
+  introNextBtn.addEventListener('click', () => {
+    introText.style.opacity = 0;
+    
+    setTimeout(() => {
+      introIdx++;
+      if (introIdx < CONFIG.whisper.length) {
+        // Show next sentence
+        introText.textContent = CONFIG.whisper[introIdx];
+        introText.style.opacity = 1;
+      } else {
+        // Sequence finished - Unlock Page
+        lockScreen.style.opacity = 0;
+        setTimeout(() => {
+          lockScreen.style.display = 'none';
+          document.body.classList.remove('locked');
+          
+          // START BACKGROUND MUSIC SAFELY NOW
+          if(CONFIG.music.enabled && !musicPlaying) {
+            bgMusic.play().catch(()=>{});
+            musicPlaying = true;
+          }
+        }, 800);
+      }
+    }, 400); // Small fade transition between text
+  });
+};
+
+/* ---------------- 3. IN-PAGE VIDEO POPUP ---------------- */
+const openVideoBtn = document.getElementById('open-video-btn');
+const closeVideoBtn = document.getElementById('close-video-btn');
+const videoModal = document.getElementById('video-modal');
+const popupVideo = document.getElementById('popup-video');
+
+popupVideo.src = CONFIG.videoSrc;
+
+openVideoBtn.addEventListener('click', () => {
+  // Show Modal
+  videoModal.style.display = 'flex';
+  setTimeout(() => videoModal.style.opacity = 1, 10);
+  
+  // Pause BG music so it doesn't clash
+  if(musicPlaying) {
+    bgMusic.pause();
+    audioBtn.classList.add('muted');
+  }
+  
+  // Play Video
+  popupVideo.currentTime = 0;
+  popupVideo.play();
+});
+
+closeVideoBtn.addEventListener('click', () => {
+  videoModal.style.opacity = 0;
+  popupVideo.pause();
+  setTimeout(() => videoModal.style.display = 'none', 300);
+  
+  // Resume BG music if it was playing before
+  if(musicPlaying) {
+    bgMusic.play();
+    audioBtn.classList.remove('muted');
+  }
+});
+
+/* ---------------- 4. FLOWER & BIRTHDAY REVEAL ---------------- */
 document.getElementById('flower-btn').addEventListener('click', function() {
   this.style.display = 'none';
   document.getElementById('flower-hint').style.display = 'none';
@@ -362,7 +429,7 @@ document.getElementById('flower-btn').addEventListener('click', function() {
   spawnConfetti(150);
 });
 
-/* ---------------- 4. CAROUSEL FIX ---------------- */
+/* ---------------- 5. CAROUSEL FIX ---------------- */
 const car = document.getElementById('carousel');
 CONFIG.finalCarousel.forEach(src => {
   const slide = document.createElement('div');
@@ -385,12 +452,10 @@ function checkPassword() {
   if (input === CONFIG.password.answer) {
     document.getElementById('gate').style.display = 'none';
     
-    // Show Letter
     const letter = document.getElementById('letter');
     letter.textContent = CONFIG.letter;
     letter.style.display = 'block';
     
-    // Show Coffee
     setTimeout(() => {
       document.getElementById('coffee').style.display = 'block';
       document.getElementById('coffee-q').textContent = CONFIG.coffee.question;
@@ -422,17 +487,6 @@ function sendResponse(answer) {
     }).catch(()=>{});
   }
 }
-
-/* ---------------- BACKGROUND MUSIC ---------------- */
-const bgMusic = new Audio();
-let musicPlaying = false;
-if(CONFIG.music.playlist.length) bgMusic.src = CONFIG.music.playlist[0];
-
-document.getElementById('audio-btn').addEventListener('click', () => {
-  if(musicPlaying) { bgMusic.pause(); }
-  else { bgMusic.play(); }
-  musicPlaying = !musicPlaying;
-});
 
 /* ---------------- CONFETTI LOGIC ---------------- */
 const canvas=document.getElementById('confetti'), ctx=canvas.getContext('2d');
