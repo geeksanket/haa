@@ -394,47 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 2. Quiz Engine (NEW)
-let currentQuiz = 0;
-const qBox = document.getElementById('quiz-q');
-const qOpts = document.getElementById('quiz-opts');
-const qFb = document.getElementById('quiz-fb');
-
-function loadQuiz() {
-    if(currentQuiz >= CONFIG.quiz.length) {
-        document.getElementById('quiz-active').style.display = 'none';
-        document.getElementById('quiz-done').style.display = 'flex';
-        fireConfetti(100);
-        return;
-    }
-    const q = CONFIG.quiz[currentQuiz];
-    qBox.textContent = q.question;
-    qOpts.innerHTML = '';
-    qFb.style.display = 'none';
-    
-    q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-btn';
-        btn.textContent = opt;
-        btn.onclick = () => {
-            // Disable buttons
-            document.querySelectorAll('.quiz-btn').forEach(b => b.style.pointerEvents = 'none');
-            // Show dramatic tease
-            qFb.textContent = q.tease;
-            qFb.style.display = 'block';
-            fireConfetti(20);
-            
-            // Move to next after 2.5 seconds
-            setTimeout(() => {
-                currentQuiz++;
-                loadQuiz();
-            }, 2500);
-        };
-        qOpts.appendChild(btn);
-    });
-}
-loadQuiz();
-
 // 3. Envelope & Audio Unlock
 const envelope = document.getElementById('envelope');
 const gate = document.getElementById('entrance-gate');
