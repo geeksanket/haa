@@ -2,291 +2,678 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday, Supriya</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Happy Birthday, Supriya! 🌸</title>
 
+<!-- Cute Bubbly & Handwriting Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   MIDNIGHT & STARLIGHT THEME
-   ============================================================ */
+/* ==========================================================================
+   1. CUTE DESIGN TOKENS & RESET
+   ========================================================================== */
 :root {
-  --bg-dark: #0a0a0a;
-  --bg-glow: #1a1a2e;
-  --gold: #d4af37;
-  --gold-light: #f9e596;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
+    --bg-pink: #fff0f5;
+    --bg-blue: #e0f7fa;
+    --bg-yellow: #fff9c4;
+    --text-main: #5d4037;
+    --text-light: #8d6e63;
+    --accent-pink: #ffb6c1;
+    --accent-hotpink: #ff69b4;
+    --white: #ffffff;
+    --shadow-soft: 0 10px 30px rgba(255, 182, 193, 0.3);
+    --shadow-hard: 0 4px 0 rgba(255, 105, 180, 0.2);
+    --font-heading: 'Fredoka', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+    --font-hand: 'Caveat', cursive;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: 'Montserrat', sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+    background: linear-gradient(135deg, var(--bg-pink) 0%, var(--bg-blue) 100%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ff69b4" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'), auto;
 }
 
-h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+body.locked { overflow: hidden; }
 
-/* Background Glow Effect */
-.ambient-glow {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, var(--bg-dark) 70%);
-  z-index: -1; pointer-events: none;
+/* ==========================================================================
+   2. MASSIVE ANIMATION LIBRARY
+   ========================================================================== */
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+@keyframes floatReverse { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(-2deg); } }
+@keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes pulseHeart { 0% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes envelopeOpen { 0% { transform: rotateX(0deg); z-index: 10; } 100% { transform: rotateX(180deg); z-index: 0; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@keyframes drift { from { transform: translateY(100vh) rotate(0deg); } to { transform: translateY(-20vh) rotate(360deg); } }
+
+/* ==========================================================================
+   3. BACKGROUND & AMBIENCE (Clouds & Petals)
+   ========================================================================== */
+.ambient-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.cloud { position: absolute; background: var(--white); border-radius: 50px; opacity: 0.6; filter: blur(2px); animation: float 6s ease-in-out infinite; }
+.cloud::before, .cloud::after { content: ''; position: absolute; background: var(--white); border-radius: 50%; }
+.cloud1 { width: 150px; height: 50px; top: 10%; left: 10%; animation-duration: 8s; }
+.cloud1::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+.cloud1::after { width: 70px; height: 70px; top: -40px; right: 20px; }
+.cloud2 { width: 200px; height: 60px; top: 30%; right: -5%; animation-duration: 10s; animation-name: floatReverse; }
+.cloud2::before { width: 80px; height: 80px; top: -40px; left: 30px; }
+.cloud2::after { width: 90px; height: 90px; top: -50px; right: 30px; }
+.cloud3 { width: 120px; height: 40px; bottom: 20%; left: -5%; animation-duration: 7s; }
+.cloud3::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+.cloud3::after { width: 60px; height: 60px; top: -30px; right: 15px; }
+
+.petal { position: absolute; background: var(--accent-pink); border-radius: 15px 0 15px 0; opacity: 0.7; }
+
+/* ==========================================================================
+   4. THE ENTRANCE ENVELOPE (INTERACTIVE)
+   ========================================================================== */
+#entrance-gate {
+    position: fixed; inset: 0; background: rgba(255,240,245,0.95); backdrop-filter: blur(5px);
+    z-index: 9999; display: flex; align-items: center; justify-content: center;
+    transition: opacity 1s ease;
 }
-
-/* ============================================================
-   1. THE ENTRANCE (AUDIO UNLOCKER)
-   ============================================================ */
-#entrance {
-  position: fixed; inset: 0; z-index: 100;
-  background: var(--bg-dark);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 1s ease;
+.envelope-wrapper { position: relative; width: 300px; height: 200px; perspective: 1000px; cursor: pointer; }
+.envelope-front { position: absolute; inset: 0; border-bottom: 100px solid var(--accent-hotpink); border-left: 150px solid var(--accent-pink); border-right: 150px solid var(--accent-pink); z-index: 3; }
+.envelope-back { position: absolute; inset: 0; background: #e6a8d7; z-index: 1; }
+.envelope-flap {
+    position: absolute; top: 0; left: 0; width: 0; height: 0;
+    border-top: 120px solid var(--accent-hotpink); border-left: 150px solid transparent; border-right: 150px solid transparent;
+    transform-origin: top; z-index: 4; transition: transform 0.8s ease-in-out;
 }
-#unlock-btn {
-  background: transparent; border: 1px solid var(--gold); color: var(--gold);
-  padding: 15px 40px; border-radius: 50px; font-size: 1rem; font-family: 'Montserrat';
-  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-  transition: all 0.3s ease;
+.envelope-heart {
+    position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
+    width: 40px; height: 40px; background: red;
+    clip-path: path('M20 35l-1.45-1.32C9.4 24.36 6 21.28 6 17.5 6 14.42 8.42 12 11.5 12c1.74 0 3.41.81 4.5 2.09C17.09 12.81 18.76 12 20.5 12 23.58 12 26 14.42 26 17.5c0 3.78-3.4 6.86-8.55 11.54L20 35z');
+    z-index: 5; animation: pulseHeart 2s infinite; display: flex; align-items: center; justify-content: center;
 }
-#unlock-btn:active { transform: scale(0.95); background: var(--gold); color: var(--bg-dark); }
-
-/* ============================================================
-   2. MAIN CONTENT & SCROLL REVEALS
-   ============================================================ */
-#main-content { display: none; opacity: 0; transition: opacity 2s ease; }
-
-section {
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 40px 20px;
-  text-align: center;
+.envelope-heart span { color: white; font-family: var(--font-body); font-weight: bold; font-size: 10px; margin-top: -5px; }
+.envelope-wrapper.open .envelope-flap { animation: envelopeOpen 1s forwards; }
+.envelope-wrapper.open .envelope-heart { opacity: 0; transition: opacity 0.3s; }
+.envelope-letter {
+    position: absolute; top: 20px; left: 10px; right: 10px; bottom: 10px;
+    background: var(--white); z-index: 2; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-hand); font-size: 1.5rem; color: var(--accent-hotpink);
+    transition: transform 1s ease 0.5s;
 }
+.envelope-wrapper.open .envelope-letter { transform: translateY(-100px); }
+.click-hint { position: absolute; bottom: -40px; left: 0; right: 0; text-align: center; font-family: var(--font-heading); color: var(--accent-hotpink); font-size: 1.2rem; animation: float 2s infinite; }
 
-/* Scroll Animation Classes */
-.reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); }
-.reveal.visible { opacity: 1; transform: translateY(0); }
+/* ==========================================================================
+   5. HERO SECTION & BOUNCY TEXT
+   ========================================================================== */
+section { position: relative; width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; z-index: 10; }
+.container { max-width: 800px; width: 100%; text-align: center; }
 
-/* Hero */
-.hero-title { font-size: clamp(3rem, 10vw, 5rem); color: var(--gold-light); margin-bottom: 20px; line-height: 1.1; }
-.hero-subtitle { font-size: 1.1rem; color: var(--text-muted); font-weight: 300; letter-spacing: 1px; }
-
-/* Polaroid Gallery */
-.gallery-grid {
-  display: flex; flex-direction: column; gap: 40px; margin-top: 40px; width: 100%; max-width: 400px;
+.bouncy-title { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+.bouncy-word { display: flex; }
+.bouncy-char {
+    font-family: var(--font-heading); font-size: clamp(3rem, 10vw, 6rem); font-weight: 600;
+    color: var(--white); text-shadow: 4px 4px 0 var(--accent-pink), 8px 8px 0 rgba(0,0,0,0.1);
+    animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
 }
-.polaroid {
-  background: #fff; padding: 15px 15px 40px 15px; border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  transform: rotate(-2deg); transition: transform 0.3s;
-}
-.polaroid:nth-child(even) { transform: rotate(3deg); }
-.polaroid img, .polaroid video { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: #111; border-radius: 2px; }
-.polaroid-caption { color: #111; font-family: 'Playfair Display', serif; font-size: 1.2rem; font-style: italic; margin-top: 15px; }
+.hero-subtitle { font-family: var(--font-body); font-size: 1.2rem; color: var(--text-light); background: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: 30px; display: inline-block; animation: floatReverse 4s infinite; margin-top: 20px; }
 
-/* Glassmorphism Letter */
-.glass-card {
-  background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border); border-radius: 20px;
-  padding: 40px 30px; max-width: 500px; width: 100%;
-  text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+/* Balloons */
+.balloons-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 1; }
+.balloon {
+    position: absolute; width: 60px; height: 75px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: flex-end;
 }
-.glass-card p { margin-bottom: 20px; font-size: 1.05rem; line-height: 1.8; color: var(--text-main); font-weight: 300; }
-.glass-card .signature { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.5rem; margin-top: 30px; display: block; }
+.balloon::after { content: ''; position: absolute; bottom: -12px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 12px solid inherit; }
+.balloon .string { position: absolute; bottom: -60px; width: 2px; height: 50px; background: rgba(0,0,0,0.2); }
 
-/* Finale Wish Button */
-#wish-btn {
-  background: var(--gold); border: none; color: var(--bg-dark);
-  padding: 20px 50px; border-radius: 50px; font-size: 1.2rem; font-family: 'Montserrat', sans-serif;
-  font-weight: 500; cursor: pointer; margin-top: 30px;
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); transition: transform 0.2s;
+/* ==========================================================================
+   6. CUTE TV VIDEO PLAYER
+   ========================================================================== */
+.cute-tv {
+    background: #ffcfdcb5; border: 15px solid #ffb6c1; border-radius: 30px;
+    padding: 20px; box-shadow: var(--shadow-soft), inset 0 0 20px rgba(255,255,255,0.8);
+    position: relative; max-width: 400px; margin: 0 auto;
+    transform: rotate(-2deg); transition: transform 0.3s;
 }
-#wish-btn:active { transform: scale(0.95); }
+.cute-tv:hover { transform: rotate(0deg) scale(1.02); }
+.tv-antenna { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 80px; height: 40px; border: 4px solid #ffb6c1; border-bottom: none; border-radius: 40px 40px 0 0; z-index: -1; }
+.tv-screen { background: #111; border-radius: 15px; overflow: hidden; position: relative; aspect-ratio: 9/16; border: 4px solid #fff; }
+.tv-screen video { width: 100%; height: 100%; object-fit: cover; }
+.tv-overlay {
+    position: absolute; inset: 0; background: rgba(255,182,193,0.8);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: opacity 0.3s; z-index: 5;
+}
+.tv-overlay-icon { font-size: 4rem; animation: pulseHeart 2s infinite; }
+.tv-overlay-text { font-family: var(--font-heading); color: #fff; font-size: 1.5rem; text-shadow: 2px 2px 0 #ff69b4; margin-top: 10px; }
+.tv-knobs { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+.knob { width: 25px; height: 25px; background: #fff; border-radius: 50%; box-shadow: 0 4px 0 #ffb6c1; }
 
-/* Canvas for Fireworks */
-#fireworks { position: fixed; inset: 0; z-index: 999; pointer-events: none; }
+/* ==========================================================================
+   7. MEMORIES: HANGING POLAROIDS
+   ========================================================================== */
+.clothesline-wrapper { width: 100%; overflow: hidden; padding: 40px 0; position: relative; }
+.clothesline { position: absolute; top: 50px; left: -50px; right: -50px; height: 4px; background: rgba(141, 110, 99, 0.4); border-radius: 4px; transform: rotate(-1deg); }
+.polaroid-scroll {
+    display: flex; gap: 40px; overflow-x: auto; padding: 20px 40px 60px 40px;
+    scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.polaroid-scroll::-webkit-scrollbar { display: none; }
+.polaroid-card {
+    flex: 0 0 280px; scroll-snap-align: center; position: relative;
+    background: var(--white); padding: 15px 15px 50px 15px; border-radius: 8px;
+    box-shadow: var(--shadow-soft); transform-origin: top center; animation: sway 4s ease-in-out infinite;
+}
+.polaroid-card:nth-child(even) { animation-delay: -2s; animation-duration: 5s; }
+.polaroid-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; background: #ffe4e1; }
+.polaroid-caption { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; font-family: var(--font-hand); font-size: 1.6rem; color: var(--text-main); }
+.clothespin { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 12px; height: 35px; background: #d7ccc8; border-radius: 5px; border: 1px solid #bcaaa4; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); z-index: 2; }
+.clothespin::after { content: ''; position: absolute; top: 15px; left: -2px; right: -2px; height: 2px; background: #8d6e63; }
+
+/* ==========================================================================
+   8. INTERACTIVE CAKE
+   ========================================================================== */
+.cake-container { position: relative; width: 250px; height: 250px; margin: 0 auto; cursor: pointer; }
+.cake-layer { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 10px; }
+.cake-bottom { bottom: 20px; width: 200px; height: 80px; background: #ffd1dc; box-shadow: inset 0 -15px 0 rgba(0,0,0,0.05), var(--shadow-hard); z-index: 1; }
+.cake-top { bottom: 100px; width: 160px; height: 70px; background: #fff0f5; box-shadow: inset 0 -10px 0 rgba(0,0,0,0.05); z-index: 2; }
+.frosting { position: absolute; top: 0; left: 0; width: 100%; height: 30px; background: #fff; border-radius: 10px 10px 20px 20px; }
+.candle { position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%); width: 15px; height: 50px; background: #ffef96; border-radius: 5px; z-index: 3; border: 2px solid #ffe066; }
+.flame { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 15px; height: 25px; background: #ff9d00; border-radius: 50% 50% 20% 20%; animation: pulseHeart 0.5s infinite alternate; transition: opacity 0.3s; }
+.flame::after { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 8px; height: 12px; background: #fffde7; border-radius: 50%; }
+.cake-container.extinguished .flame { opacity: 0; animation: none; }
+.cake-hint { font-family: var(--font-heading); color: var(--accent-hotpink); font-size: 1.2rem; margin-top: 20px; animation: float 2s infinite; }
+
+/* ==========================================================================
+   9. NOTEBOOK LETTER
+   ========================================================================== */
+.notebook-paper {
+    background: #fff; max-width: 500px; width: 100%; margin: 0 auto;
+    padding: 50px 30px 40px 60px; position: relative; border-radius: 5px;
+    box-shadow: var(--shadow-soft);
+    background-image: linear-gradient(#f0b3c6 1px, transparent 1px);
+    background-size: 100% 2rem; background-position: 0 45px;
+    transform: rotate(1deg); transition: transform 0.3s;
+}
+.notebook-paper:hover { transform: rotate(0deg); }
+.notebook-paper::before { content: ''; position: absolute; top: 0; bottom: 0; left: 40px; width: 2px; background: #ffb6c1; }
+.notebook-content { font-family: var(--font-hand); font-size: 1.8rem; line-height: 2rem; color: #4a4a4a; white-space: pre-line; }
+
+/* ==========================================================================
+   10. CHAT BUBBLE CHOICE (COFFEE)
+   ========================================================================== */
+.chat-container { max-width: 400px; width: 100%; margin: 40px auto; display: flex; flex-direction: column; gap: 15px; }
+.chat-bubble { background: var(--white); padding: 15px 20px; border-radius: 20px; font-family: var(--font-body); font-size: 1.1rem; font-weight: 600; color: var(--text-main); box-shadow: var(--shadow-soft); position: relative; max-width: 85%; }
+.chat-bubble.receive { align-self: flex-start; border-bottom-left-radius: 5px; background: #fff0f5; }
+.chat-bubble.send-options { align-self: flex-end; background: transparent; box-shadow: none; padding: 0; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.reply-btn { background: var(--accent-hotpink); color: #fff; border: none; padding: 12px 20px; border-radius: 20px; font-family: var(--font-body); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-hard); transition: transform 0.1s, background 0.2s; }
+.reply-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0); }
+.reply-btn.outline { background: #fff; color: var(--accent-hotpink); border: 2px solid var(--accent-hotpink); box-shadow: 0 4px 0 #ffb6c1; }
+.reply-btn.outline:active { box-shadow: 0 0 0 transparent; }
+
+/* ==========================================================================
+   11. MUSIC PLAYER (FIXED)
+   ========================================================================== */
+.music-player {
+    position: fixed; bottom: 20px; right: 20px; background: #fff; border-radius: 40px;
+    padding: 10px 20px 10px 10px; display: flex; align-items: center; gap: 15px;
+    box-shadow: var(--shadow-soft); z-index: 100; cursor: pointer;
+    border: 2px solid var(--accent-pink); transition: transform 0.3s;
+}
+.music-player:hover { transform: scale(1.05); }
+.vinyl { width: 40px; height: 40px; background: #222; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; border: 2px solid #555; }
+.vinyl::after { content: ''; width: 12px; height: 12px; background: var(--accent-hotpink); border-radius: 50%; }
+.vinyl.spin { animation: drift 3s linear infinite; animation-name: spin; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.music-text { font-family: var(--font-heading); font-size: 1rem; color: var(--accent-hotpink); display: flex; flex-direction: column; }
+.music-text span { font-size: 0.7rem; color: var(--text-light); font-family: var(--font-body); }
+
+/* Elements reveal on scroll */
+.cute-reveal { opacity: 0; transform: translateY(30px) scale(0.95); transition: all 0.8s cubic-bezier(0.5, 1, 0.89, 1); }
+.cute-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Canvas for Confetti */
+#confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
 </style>
 </head>
-<body>
+<body class="locked">
 
-<div class="ambient-glow"></div>
-<canvas id="fireworks"></canvas>
+<!-- ==========================================================================
+   CONFIGURATION SCRIPT (ADD YOUR DETAILS HERE)
+   ========================================================================== -->
+<script>
+const CONFIG = {
+    // 1. Text Details
+    birthdayGirl: "Supriya",
+    buildup: "Two months in, and I already know your 'haaa' is a whole language of its own.",
+    
+    // 2. Media Links
+    videoSrc: "editedvideofinal.mp4",
+    bgMusic: "track1.mp3", // ADD YOUR MUSIC FILE HERE
+    
+    // 3. Polaroid Photos (Add as many as you want)
+    photos: [
+        { src: "image1.jpeg", caption: "Day 1 🌻" },
+        { src: "image2.jpg", caption: "That 'haaa' moment 😂" },
+        { src: "https://via.placeholder.com/400?text=Pic+3", caption: "Always pretty ✨" }
+    ],
 
-<!-- 1. ENTRANCE -->
-<div id="entrance">
-  <h1 style="color:var(--gold); font-size: 2rem; margin-bottom: 30px;" class="serif">Hello, Supriya.</h1>
-  <button id="unlock-btn">Tap to open</button>
+    // 4. The Lined Notebook Letter
+    letter: `Happy Birthday!! 🥳🎂
+
+Finally tumhara birthday aa hi gaya.
+Aaj to badhiya gaana shaana, dance wance hoga. (mujhe bhi aana tha waha)
+
+Waise 2 mahine mein maine itna toh notice kar hi liya hai —
+"haaa" tumhara universal reply hai.
+Aur plans change karna... I don't think that's a habit anymore, it's a lifestyle. 😂
+
+I genuinely hope ye saal tumhare liye bohot acha ho. (and i mean it)
+Jo bhi tum deserve karti ho, sab aapke charano me aa jaye.
+Aur jitna tum dusro ko smile karati ho, utni hi smiles tumhe bhi mile.
+
+Baaki, aaj ke din bas khush rehna. (buzurg sanket ka ashirwad le lijiye)
+Aur cake share karna... (Just kidding. Mat karna. karogi bhi kaise!!)
+
+once again — Happiesttt Birthday! 🌻
+- Sanket`,
+
+    // 5. Discord Webhook & Chat
+    chatQuestion: "Coffee or tea sometime? ☕ No pressure, just thought it'd be fun! 🪴",
+    chatYes: "Sounds fun! ✨",
+    chatNo: "Hatt be 🤣",
+    webhookUrl: "https://discord.com/api/webhooks/1534157023623516224/07_3EG93GPJcqHqpKQZwzjOdqzXMTtRsJIytQvjc3ymwmfvoCtoZ47xIpQYBIVzZhuKI"
+};
+</script>
+
+<!-- Ambient Background Elements -->
+<div class="ambient-container" id="ambient">
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
 </div>
 
-<!-- 2. MAIN CONTENT -->
-<div id="main-content">
-  
-  <section id="hero">
-    <h1 class="hero-title reveal">Happy<br>Birthday.</h1>
-    <p class="hero-subtitle reveal" style="transition-delay: 0.2s;">Let's take a walk down memory lane.</p>
-    <div class="reveal" style="margin-top: 50px; transition-delay: 0.4s; color: var(--gold); font-size: 24px;">↓</div>
-  </section>
+<canvas id="confetti-canvas"></canvas>
 
-  <section id="memories">
-    <h2 class="serif reveal" style="font-size: 2rem; color: var(--gold-light);">Moments</h2>
-    <div class="gallery-grid">
-      
-      <!-- ADD YOUR IMAGE/VIDEO HERE -->
-      <div class="polaroid reveal">
-        <!-- Replace src with your image/video -->
-        <img src="https://via.placeholder.com/400x500/111111/d4af37?text=Your+Photo+Here" alt="Memory">
-        <div class="polaroid-caption">Two months in...</div>
-      </div>
-
-      <!-- ADD ANOTHER IMAGE HERE -->
-      <div class="polaroid reveal">
-        <img src="https://via.placeholder.com/400x500/111111/d4af37?text=Second+Photo+Here" alt="Memory">
-        <div class="polaroid-caption">And your "haaa" is a lifestyle.</div>
-      </div>
-
+<!-- 1. ENTRANCE ENVELOPE -->
+<div id="entrance-gate">
+    <div class="envelope-wrapper" id="envelope">
+        <div class="envelope-back"></div>
+        <div class="envelope-letter">For Supriya 💌</div>
+        <div class="envelope-front"></div>
+        <div class="envelope-flap"></div>
+        <div class="envelope-heart" id="env-heart"><span>TAP</span></div>
+        <div class="click-hint">Tap the heart to open</div>
     </div>
-  </section>
-
-  <section id="letter">
-    <h2 class="serif reveal" style="font-size: 2rem; color: var(--gold-light); margin-bottom: 30px;">For You</h2>
-    <div class="glass-card reveal">
-      <p>Finally tumhara birthday aa hi gaya.<br>Aaj to badhiya gaana shaana, dance wance hoga.</p>
-      <p>I genuinely hope ye saal tumhare liye bohot acha ho. Jo bhi tum deserve karti ho, sab aapke charano me aa jaye.</p>
-      <p>Baaki, aaj ke din bas khush rehna. Aur cake share karna... (Just kidding. Mat karna.)</p>
-      <span class="signature">Tumhara, Sanket</span>
-    </div>
-  </section>
-
-  <section id="finale">
-    <h1 class="hero-title reveal" style="font-size: 2.5rem;">Make a Wish ✨</h1>
-    <button id="wish-btn" class="reveal">Light the Candles</button>
-  </section>
-
 </div>
 
-<!-- AUDIO (ADD YOUR MUSIC FILE HERE) -->
-<audio id="bg-music" loop>
-  <source src="your-music-file.mp3" type="audio/mpeg">
-</audio>
+<!-- FIXED MUSIC PLAYER -->
+<div class="music-player" id="music-btn">
+    <div class="vinyl" id="vinyl-icon"></div>
+    <div class="music-text">
+        Supriya's Song
+        <span id="music-status">Tap to pause</span>
+    </div>
+</div>
+<audio id="audio-element" loop></audio>
+
+<!-- 2. HERO SECTION -->
+<section id="hero">
+    <div class="balloons-container" id="balloons"></div>
+    <div class="container">
+        <div class="bouncy-title" id="title-happy"></div>
+        <div class="bouncy-title" id="title-birthday"></div>
+        <div class="bouncy-title" id="title-name"></div>
+        <div class="hero-subtitle">Keep scrolling down softly... ↓</div>
+    </div>
+</section>
+
+<!-- 3. CUTE VIDEO PLAYER -->
+<section id="video-section">
+    <div class="container cute-reveal">
+        <h2 style="font-family: var(--font-heading); color: var(--accent-hotpink); font-size: 2.2rem; margin-bottom: 30px;">I made a little edit...</h2>
+        <div class="cute-tv">
+            <div class="tv-antenna"></div>
+            <div class="tv-screen">
+                <video id="cute-video" playsinline></video>
+                <div class="tv-overlay" id="tv-overlay">
+                    <div class="tv-overlay-icon">▶️</div>
+                    <div class="tv-overlay-text">Tap to Play</div>
+                </div>
+            </div>
+            <div class="tv-knobs">
+                <div class="knob"></div>
+                <div class="knob"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. MEMORIES STRING -->
+<section id="gallery-section" style="padding: 60px 0;">
+    <div class="container cute-reveal">
+        <h2 style="font-family: var(--font-heading); color: var(--accent-hotpink); font-size: 2.2rem; margin-bottom: 10px;">Our Little Gallery</h2>
+        <p style="color: var(--text-light); margin-bottom: 20px;">Swipe horizontally ←→</p>
+    </div>
+    <div class="clothesline-wrapper cute-reveal">
+        <div class="clothesline"></div>
+        <div class="polaroid-scroll" id="polaroid-container">
+            <!-- Polaroids injected via JS -->
+        </div>
+    </div>
+</section>
+
+<!-- 5. INTERACTIVE CAKE -->
+<section id="cake-section">
+    <div class="container cute-reveal">
+        <h2 style="font-family: var(--font-heading); color: var(--accent-hotpink); font-size: 2.2rem; margin-bottom: 40px;">Make a Wish! ✨</h2>
+        <div class="cake-container" id="cake">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="cake-layer cake-top"><div class="frosting"></div></div>
+            <div class="cake-layer cake-bottom"><div class="frosting"></div></div>
+        </div>
+        <div class="cake-hint" id="cake-hint">Tap the flame to blow out the candle!</div>
+    </div>
+</section>
+
+<!-- 6. NOTEBOOK LETTER -->
+<section id="letter-section">
+    <div class="container cute-reveal">
+        <div class="notebook-paper">
+            <div class="notebook-content" id="letter-text"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 7. CHAT BUBBLE CHOICE -->
+<section id="chat-section" style="min-height: 70vh;">
+    <div class="container cute-reveal">
+        <div class="chat-container">
+            <div class="chat-bubble receive" id="chat-q"></div>
+            <div class="chat-bubble send-options" id="chat-options">
+                <button class="reply-btn" id="btn-yes"></button>
+                <button class="reply-btn outline" id="btn-no"></button>
+            </div>
+            <div class="chat-bubble receive" id="chat-thanks" style="display: none; background: #e8f5e9; color: #2e7d32;">
+                Yay! Message sent safely to Sanket. 🌻
+            </div>
+        </div>
+    </div>
+</section>
+
 
 <script>
-/* ============================================================
-   1. ENTRANCE & AUDIO
-   ============================================================ */
-const entrance = document.getElementById('entrance');
-const mainContent = document.getElementById('main-content');
-const bgMusic = document.getElementById('bg-music');
+/* ==========================================================================
+   JAVASCRIPT ENGINE: NO BUGS, PURE CUTE LOGIC
+   ========================================================================== */
 
-document.getElementById('unlock-btn').addEventListener('click', () => {
-  // Play music
-  bgMusic.volume = 0.5;
-  bgMusic.play().catch(e => console.log("Audio play failed"));
-  
-  // Fade out entrance
-  entrance.style.opacity = '0';
-  setTimeout(() => {
-    entrance.style.display = 'none';
-    // Show main content
-    mainContent.style.display = 'block';
-    // Trigger a tiny reflow so opacity transition works
-    void mainContent.offsetWidth; 
-    mainContent.style.opacity = '1';
-  }, 1000);
-});
+// 1. Initialize Content from CONFIG
+document.addEventListener('DOMContentLoaded', () => {
+    // Populate Hero Text with bouncy spans
+    const buildBouncyText = (word, containerId, delayOffset) => {
+        const container = document.getElementById(containerId);
+        const wordDiv = document.createElement('div');
+        wordDiv.className = 'bouncy-word';
+        word.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.className = 'bouncy-char';
+            span.innerHTML = char === ' ' ? '&nbsp;' : char;
+            span.style.animationDelay = `${delayOffset + (i * 0.1)}s`;
+            // Random colors for name
+            if(containerId === 'title-name') {
+                const colors = ['#ff69b4', '#00bcd4', '#ffb6c1', '#ba68c8', '#ff9800'];
+                span.style.color = colors[i % colors.length];
+                span.style.textShadow = `3px 3px 0 #fff`;
+            }
+            wordDiv.appendChild(span);
+        });
+        container.appendChild(wordDiv);
+    };
 
-/* ============================================================
-   2. SCROLL REVEAL (INTERSECTION OBSERVER)
-   ============================================================ */
-// This is much lighter and smoother than GSAP for mobile
-const revealElements = document.querySelectorAll('.reveal');
+    buildBouncyText("Happy", "title-happy", 1.5);
+    buildBouncyText("Birthday,", "title-birthday", 2.0);
+    buildBouncyText(CONFIG.birthdayGirl + "!", "title-name", 2.8);
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+    // Populate Polaroids
+    const polaroidContainer = document.getElementById('polaroid-container');
+    CONFIG.photos.forEach(photo => {
+        const card = document.createElement('div');
+        card.className = 'polaroid-card';
+        card.innerHTML = `
+            <div class="clothespin"></div>
+            <img src="${photo.src}" alt="Memory">
+            <div class="polaroid-caption">${photo.caption}</div>
+        `;
+        polaroidContainer.appendChild(card);
+    });
+
+    // Populate Letter
+    document.getElementById('letter-text').textContent = CONFIG.letter;
+
+    // Populate Chat
+    document.getElementById('chat-q').textContent = CONFIG.chatQuestion;
+    document.getElementById('btn-yes').textContent = CONFIG.chatYes;
+    document.getElementById('btn-no').textContent = CONFIG.chatNo;
+
+    // Set Audio & Video
+    document.getElementById('audio-element').src = CONFIG.bgMusic;
+    document.getElementById('cute-video').src = CONFIG.videoSrc;
+
+    // Generate Balloons
+    const balloonsContainer = document.getElementById('balloons');
+    const balloonColors = ['#ffb6c1', '#ffc0cb', '#ffe4e1', '#ff69b4', '#87cefa', '#e0ffff'];
+    for(let i=0; i<15; i++) {
+        const b = document.createElement('div');
+        b.className = 'balloon';
+        b.style.backgroundColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+        b.style.left = `${Math.random() * 100}%`;
+        b.style.bottom = `-100px`;
+        b.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+        b.style.animation = `drift ${Math.random() * 10 + 10}s linear infinite`;
+        b.style.animationDelay = `${Math.random() * 5}s`;
+        
+        const string = document.createElement('div');
+        string.className = 'string';
+        b.appendChild(string);
+        balloonsContainer.appendChild(b);
     }
-  });
-}, {
-  threshold: 0.15 // Triggers when 15% of the element is visible
 });
+
+// 2. Interactive Envelope & Audio Unlock
+const envelope = document.getElementById('envelope');
+const gate = document.getElementById('entrance-gate');
+const audio = document.getElementById('audio-element');
+const vinyl = document.getElementById('vinyl-icon');
+const musicStatus = document.getElementById('music-status');
+let isMusicPlaying = false;
+
+envelope.addEventListener('click', () => {
+    // Trigger CSS animation
+    envelope.classList.add('open');
+    
+    // Play audio
+    audio.volume = 0.6;
+    audio.play().then(() => {
+        isMusicPlaying = true;
+        vinyl.classList.add('spin');
+        musicStatus.textContent = "Playing...";
+    }).catch(e => console.log("Audio requires manual play"));
+
+    // Remove gate
+    setTimeout(() => {
+        gate.style.opacity = '0';
+        setTimeout(() => {
+            gate.style.display = 'none';
+            document.body.classList.remove('locked');
+            fireConfetti(100); // Initial pop!
+        }, 1000);
+    }, 1500);
+});
+
+// 3. Music Player Toggle
+document.getElementById('music-btn').addEventListener('click', () => {
+    if(isMusicPlaying) {
+        audio.pause();
+        vinyl.classList.remove('spin');
+        musicStatus.textContent = "Paused - Tap to play";
+    } else {
+        audio.play();
+        vinyl.classList.add('spin');
+        musicStatus.textContent = "Playing...";
+    }
+    isMusicPlaying = !isMusicPlaying;
+});
+
+// 4. Video Player Logic
+const video = document.getElementById('cute-video');
+const tvOverlay = document.getElementById('tv-overlay');
+
+tvOverlay.addEventListener('click', () => {
+    video.currentTime = 0;
+    video.muted = false;
+    video.play();
+    tvOverlay.style.opacity = '0';
+    setTimeout(() => tvOverlay.style.display = 'none', 300);
+    
+    // Pause background music during video
+    if(isMusicPlaying) {
+        audio.pause();
+        vinyl.classList.remove('spin');
+    }
+});
+
+video.addEventListener('ended', () => {
+    tvOverlay.style.display = 'flex';
+    setTimeout(() => tvOverlay.style.opacity = '1', 10);
+    // Resume bg music
+    if(isMusicPlaying) {
+        audio.play();
+        vinyl.classList.add('spin');
+    }
+});
+
+// 5. Interactive Cake
+const cake = document.getElementById('cake');
+const cakeHint = document.getElementById('cake-hint');
+let cakeBlown = false;
+
+cake.addEventListener('click', () => {
+    if(cakeBlown) return;
+    cake.classList.add('extinguished');
+    cakeHint.textContent = "Yay! Happy Birthday! 🎉";
+    cakeBlown = true;
+    fireConfetti(200);
+    
+    // Create extra balloons
+    for(let i=0; i<10; i++) {
+        setTimeout(fireConfetti.bind(null, 50), i*200);
+    }
+});
+
+// 6. Scroll Reveal Observer
+const revealElements = document.querySelectorAll('.cute-reveal');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.15 });
 
 revealElements.forEach(el => observer.observe(el));
 
-/* ============================================================
-   3. FIREWORKS FINALE (PURE CANVAS)
-   ============================================================ */
-const canvas = document.getElementById('fireworks');
+// 7. Discord Webhook Logic
+const btnYes = document.getElementById('btn-yes');
+const btnNo = document.getElementById('btn-no');
+const optionsDiv = document.getElementById('chat-options');
+const thanksDiv = document.getElementById('chat-thanks');
+
+const sendReply = (answer) => {
+    optionsDiv.style.display = 'none';
+    thanksDiv.style.display = 'block';
+    
+    if(CONFIG.webhookUrl) {
+        fetch(CONFIG.webhookUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                content: `🎀 **CUTE ALERT!** ${CONFIG.birthdayGirl} reached the end and replied:\n> **"${answer}"** 🌸`
+            })
+        }).catch(e => console.log("Webhook hidden error"));
+    }
+    fireConfetti(50);
+};
+
+btnYes.addEventListener('click', () => sendReply(CONFIG.chatYes));
+btnNo.addEventListener('click', () => sendReply(CONFIG.chatNo));
+
+// 8. Custom High-Performance Confetti Engine
+const canvas = document.getElementById('confetti-canvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
-let isFireworksActive = false;
+let animFrame;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', resize);
+resize();
 
-function createFirework(x, y) {
-  const colors = ['#d4af37', '#f9e596', '#ffffff', '#ff6b6b', '#4ecdc4'];
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: x, y: y,
-      vx: (Math.random() - 0.5) * (Math.random() * 15),
-      vy: (Math.random() - 0.5) * (Math.random() * 15),
-      life: Math.random() * 60 + 40,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.random() * 3 + 1
-    });
-  }
+function fireConfetti(amount) {
+    const colors = ['#ffb6c1', '#ff69b4', '#ffffff', '#ffd700', '#87cefa'];
+    for(let i=0; i<amount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height * 0.5 - 50, // Start above mid
+            r: Math.random() * 6 + 4,
+            dx: Math.random() * 4 - 2,
+            dy: Math.random() * 5 + 2,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            tilt: Math.floor(Math.random() * 10) - 10,
+            tiltAngle: 0,
+            tiltAngleInc: (Math.random() * 0.07) + 0.05
+        });
+    }
+    if(!animFrame) updateConfetti();
 }
 
-function animateFireworks() {
-  if (!isFireworksActive && particles.length === 0) return;
-  
-  ctx.fillStyle = 'rgba(10, 10, 10, 0.2)'; // Creates a trailing effect
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  for (let i = particles.length - 1; i >= 0; i--) {
-    let p = particles[i];
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.fill();
+function updateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let active = false;
     
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.15; // gravity
-    p.life--;
+    for(let i=0; i<particles.length; i++) {
+        let p = particles[i];
+        if(p.y < canvas.height) active = true;
+        
+        p.tiltAngle += p.tiltAngleInc;
+        p.y += (Math.cos(p.tiltAngle) + 1 + p.r / 2) / 2;
+        p.x += Math.sin(p.tiltAngle) * 2;
+        
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+        ctx.stroke();
+    }
     
-    if (p.life <= 0) particles.splice(i, 1);
-  }
-  
-  requestAnimationFrame(animateFireworks);
+    if(active) {
+        animFrame = requestAnimationFrame(updateConfetti);
+    } else {
+        particles = [];
+        animFrame = null;
+    }
 }
-
-document.getElementById('wish-btn').addEventListener('click', (e) => {
-  e.target.style.display = 'none';
-  document.querySelector('#finale h1').textContent = "Happy Birthday! 🥳";
-  
-  isFireworksActive = true;
-  animateFireworks();
-  
-  // Launch multiple fireworks
-  createFirework(canvas.width / 2, canvas.height / 3);
-  setTimeout(() => createFirework(canvas.width / 4, canvas.height / 2), 400);
-  setTimeout(() => createFirework(canvas.width * 0.75, canvas.height / 2), 800);
-  setTimeout(() => createFirework(canvas.width / 2, canvas.height / 4), 1200);
-});
 </script>
 </body>
 </html>
